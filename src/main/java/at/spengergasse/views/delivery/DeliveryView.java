@@ -1,15 +1,20 @@
 package at.spengergasse.views.delivery;
 
+import at.spengergasse.views.home.HomeView;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 import org.vaadin.lineawesome.LineAwesomeIconUrl;
+
+import java.util.OptionalDouble;
 
 @PageTitle("Delivery")
 @Route("delivery")
@@ -18,47 +23,55 @@ public class DeliveryView extends VerticalLayout {
 
     public DeliveryView() {
         setSpacing(false);
-        H1 companyName = new H1("Mochi Cafe");
-        companyName.getStyle()
-                .set("font-family", "cursive")
-                .set("font-size", "6rem")
-                .set("margin", "0");
 
-        H2 subName = new H2("... the only coffee you need ...");
-        subName.getStyle()
-                .set("margin", "0")
-                .set("color", "gray");
+        add(HomeView.getHeader());
 
         H2 title = new H2("Lieferung");
+        add(title);
 
-        H2 zone1 = new H2("5. Bezirk");
-        Paragraph price1 = new Paragraph("Lieferkosten: 3,90 Euro");
-        Paragraph free1 = new Paragraph("Gratislieferung ab 15,00 Euro");
+        Component zone1 = getCard("5. Bezirk", 3.9, OptionalDouble.of(15.0));
+        Component zone2 = getCard("3. und 4. Bezirk", 5.9, OptionalDouble.of(20));
+        Component zone3 = getCard("Wien", 7.9, OptionalDouble.of(30));
+        Component zone4 = getCard("Außerhalb von Wien", 20, OptionalDouble.empty());
 
-        H2 zone2 = new H2("3. und 4. Bezirk");
-        Paragraph price2 = new Paragraph("Lieferkosten: 5,90 Euro");
-        Paragraph free2 = new Paragraph("Gratislieferung ab 20,00 Euro");
+        FlexLayout cardsLayout = new FlexLayout(zone1, zone2, zone3, zone4);
+        cardsLayout.setWidthFull();
+        cardsLayout.setJustifyContentMode(JustifyContentMode.CENTER);
+        cardsLayout.setFlexWrap(FlexLayout.FlexWrap.WRAP);
+        add(cardsLayout);
 
-        H2 zone3 = new H2("Wien");
-        Paragraph price3 = new Paragraph("Lieferkosten: 7,90 Euro");
-        Paragraph free3 = new Paragraph("Gratislieferung ab 30,00 Euro");
-
-        H2 zone4 = new H2("Außerhalb von Wien");
-        Paragraph price4 = new Paragraph("Lieferkosten: 20,00 Euro");
-        Paragraph free4 = new Paragraph("Keine Gratislieferung");
-
-        add(
-                companyName, subName, title,
-                zone1, price1, free1,
-                zone2, price2, free2,
-                zone3, price3, free3,
-                zone4, price4, free4
-        );
+        Paragraph info = new Paragraph("Wir liefern Ihre Bestellung in der Regel innerhalb von 30 bis 90 Minuten – frisch und heiß zu Ihnen nach Hause.");
+        info.setWidth("100%");
+        info.getStyle().set("text-align", "center");
+        add(info);
 
         setSizeFull();
         setJustifyContentMode(JustifyContentMode.CENTER);
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         getStyle().set("text-align", "center");
+    }
+
+    private Component getCard(String sellingZone, double deliveryPrice, OptionalDouble freeDelivery){
+        Paragraph free;
+
+        H2 zone = new H2(sellingZone);
+        Paragraph price = new Paragraph(deliveryPrice + " Euro");
+        if(freeDelivery.isPresent()){
+            free = new Paragraph( "Gratislieferung " + freeDelivery.getAsDouble() + " Euro");
+        }else{
+            free = new Paragraph("Keine Gratislieferung");
+        }
+        VerticalLayout card = new VerticalLayout(zone, price, free);
+        card.setWidth("350px");
+        card.setPadding(true);
+        card.setSpacing(false);
+
+        card.getStyle()
+                .set("border", "1px solid lightgray")
+                .set("border-radius", "10px")
+                .set("margin", "10px");
+
+        return card;
     }
 
 }
