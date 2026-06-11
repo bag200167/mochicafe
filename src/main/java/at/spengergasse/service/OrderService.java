@@ -55,4 +55,12 @@ public class OrderService {
             .map(order -> order.toString())
             .collect(Collectors.joining("\n"));
     }
+
+    public void addWrongOrder() {
+        Order ord;
+
+        // -20 Euro!!!
+        ord = new Order(LocalDate.now(), "melange", "Venti", -20.0, 1, true);
+        order.add(ord);
+    }
 }
