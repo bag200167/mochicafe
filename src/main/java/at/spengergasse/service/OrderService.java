@@ -24,7 +24,6 @@ public class OrderService {
         String[] SIZES = {"Klein", "Mittel", "Grande", "Venti"};
 
         faker = new Faker();
-        order.clear();
 
         for (int i = 0; i < anz; i++) {
             p = new Order();
@@ -44,6 +43,10 @@ public class OrderService {
     public ArrayList<Order> findAll (){
         ArrayList<Order> copy = new ArrayList<Order>(order);
         return copy;
+    }
+
+    public void removeAll() {
+        order.clear();
     }
 
     @Override
