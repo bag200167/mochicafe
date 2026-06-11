@@ -41,7 +41,12 @@ public class OrderService {
         }
     }
 
-@Override
+    public ArrayList<Order> findAll (){
+        ArrayList<Order> copy = new ArrayList<Order>(order);
+        return copy;
+    }
+
+    @Override
     public String toString() {
     return order.stream()
             .map(order -> order.toString())
