@@ -5,6 +5,9 @@ import at.spengergasse.domain.Order;
 import at.spengergasse.service.OrderService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
@@ -13,6 +16,11 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -30,6 +38,7 @@ public class OrdersView extends VerticalLayout {
     private final Button buttonRemoveAllOrders = new Button("Remove All Orders");
     private final Button buttonAdd10Orders = new Button("Add 10 Orders");
     private final Button buttonAddWrong = new Button("Add WRONG order");
+    private final Button buttonAddOrder = new Button("Add order");
 
 
     private final Grid<Order> grid = new Grid<>(Order.class, false);
@@ -42,7 +51,9 @@ public class OrdersView extends VerticalLayout {
         buttonAddWrong.addClickListener(b -> addWrongOrder());
         buttonRemoveAllOrders.addClickListener(b -> removeAllOrders());
         buttonAdd10Orders.addClickListener(b -> add10Orders());
-        HorizontalLayout buttons = new HorizontalLayout(buttonRemoveAllOrders,buttonAdd10Orders,buttonAddWrong);
+        buttonAddOrder.addClickListener(buttonClickEvent -> addOrder());
+
+        HorizontalLayout buttons = new HorizontalLayout(buttonRemoveAllOrders,buttonAdd10Orders,buttonAddWrong, buttonAddOrder);
         buttons.setSpacing(true);
 
         grid.addColumn(o -> o.getOrderId())
@@ -91,6 +102,80 @@ public class OrdersView extends VerticalLayout {
         reload();
     }
 
+    private void addOrder() {
+        Dialog dialog = new Dialog();
+        dialog.setHeaderTitle("New Coffee Order");
+        TextField orderId = new TextField("Order ID");
+        orderId.setReadOnly(true);
+
+        ComboBox<String> coffee = new ComboBox<>("Coffee");
+        coffee.setItems("Cappucino", "Latte", "Melange", "Espresso", "Mocha", "Americano");
+
+        ComboBox<String> size = new ComboBox<>("Size");
+        size.setItems("Small", "Medium", "Grande", "Venti");
+        NumberField price = new NumberField("Price");
+        IntegerField quantity = new IntegerField("Quantity");
+        Checkbox sirup = new Checkbox("Syrup");
+        DatePicker orderDate = new DatePicker("Order date");
+
+        BeanValidationBinder<Order> binder =
+                new BeanValidationBinder<>(Order.class);
+
+        // Do not bind the Id Field! ??????
+        binder.forField(orderDate)
+                .bind("orderDate");
+
+        binder.forField(coffee)
+                .bind("coffee");
+
+        binder.forField(size)
+                .bind("size");
+
+        binder.forField(price)
+                .bind("price");
+
+        binder.forField(quantity)
+                .bind("quantity");
+
+        binder.forField(sirup)
+                .bind("sirup");
+
+        Order order = new Order();
+        order.setOrderId();
+        orderId.setValue(""+ order.getOrderId());
+
+        binder.setBean(order);
+
+        VerticalLayout formLayout = new VerticalLayout(
+                orderId,
+                orderDate,
+                coffee,
+                size,
+                price,
+                quantity,
+                sirup
+        );
+
+        Button saveButton = new Button("OK", event -> {
+            if (binder.validate().isOk()) {
+                OrderService.add(order);
+                reload();
+                dialog.close();
+                Notification.show("Coffee order saved");
+            } else {
+                Notification.show("Check your input");
+            }
+        });
+
+        Button cancelButton = new Button("Cancel",
+                event -> dialog.close());
+
+        dialog.add(formLayout);
+        dialog.getFooter().add(cancelButton, saveButton);
+
+        dialog.open();
+    }
+
     private void oneMore(Long orderId) {
         try {
             OrderService.oneMore(orderId);
@@ -108,7 +193,6 @@ public class OrdersView extends VerticalLayout {
         }catch (CoffeeOrderException e) {
             Notification.show(e.getMessage());
         }
-
     }
 
     private void addWrongOrder() {

@@ -19,6 +19,10 @@ public class OrderService {
         fillTestData(500);
     }
 
+    public static void add(Order order) {
+        orders.add(order);
+    }
+
     public void fillTestData(int anz) {
         Order p;
         Faker faker;
@@ -34,7 +38,7 @@ public class OrderService {
             p.setOrderDate(LocalDate.now().minusDays(faker.number().numberBetween(0, 30)));
             p.setCoffee(COFFEES[faker.number().numberBetween(0, COFFEES.length)]);
             p.setSize(SIZES[faker.number().numberBetween(0, SIZES.length)]);
-            p.setPrice(faker.number().randomDouble(2, 3, 8));
+            p.setPrice(faker.number().randomDouble(2, 3, 7));
             p.setQuantity(faker.number().numberBetween(1, 6));
             p.setSirup(faker.bool().bool());
 
@@ -66,7 +70,7 @@ public class OrderService {
         orders.add(ord);
     }
 
-    public static void removeOrder_old(Long orderId) {
+    public void removeOrder_old(Long orderId) {
             Order o;
             Iterator<Order> it;
             int anz;
@@ -105,7 +109,7 @@ public class OrderService {
                 .forEach(order -> order.setQuantity(order.getQuantity()+1));
     }
 
-    public static void oneMore_old(Long orderId) {
+    public void oneMore_old(Long orderId) {
         for (Order o : orders) {
             if (o.getOrderId().equals(orderId)) {
                 o.setQuantity(o.getQuantity() + 1);

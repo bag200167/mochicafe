@@ -17,31 +17,32 @@ import java.util.concurrent.atomic.AtomicLong;
 @Entity
 
 public class Order implements  Cloneable{
-     @Id
+    @Id
     private Long orderId;
+
      @NotNull(message = "Order Date is required!")
      @PastOrPresent(message = "The order date cannot be in the Future!")
-    private LocalDate orderDate;
+    private LocalDate orderDate = LocalDate.now();
 
     @NotBlank(message = "The coffee is required!")
-    @Size(min= 1, max = 20, message = "Wrong Coffee Format")
-    private String    coffee;
+    private String    coffee = "Cappucino";
 
-    @Pattern(regexp = "Small|Medium|Grande|Venti", message = "Size needs to be Klein|Mittel|Grande|Venti")
-    private String    size;
+    @NotBlank(message = "The Size is required!")
+    @Pattern(regexp = "Small|Medium|Grande|Venti", message = "Size needs to be Small|Medium|Grande|Venti")
+    private String    size = "Medium";
 
     @NotNull(message = "The Price is required!")
     @DecimalMin(value = "3", message = "The minimum Price is 3 Euros!")
     @DecimalMax(value = "8", message = "The maxmimum Price is 8 Euros!")
-    private Double    price;
+    private Double    price = 4.0;
 
     @NotNull(message = "Quantity is required!")
     @Min(value = 1, message = "The minimum quantity is one!")
-    @Max(value = 8, message = "The maxmimum quantity is 8   !")
-    private Integer   quantity;
+    @Max(value = 8, message = "The maxmimum quantity is 8!")
+    private Integer   quantity = 1;
 
     @NotNull(message = "Syrup needs yes or no!")
-    private Boolean   sirup;
+    private Boolean   sirup = false;
 
      private static final AtomicLong sequence = new AtomicLong(1000);
 
