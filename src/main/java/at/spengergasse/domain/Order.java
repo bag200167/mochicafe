@@ -2,6 +2,7 @@ package at.spengergasse.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -18,11 +19,28 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Order implements  Cloneable{
      @Id
     private Long orderId;
+     @NotNull(message = "Order Date is required!")
+     @PastOrPresent(message = "The order date cannot be in the Future!")
     private LocalDate orderDate;
+
+    @NotBlank(message = "The coffee is required!")
+    @Size(min= 1, max = 20, message = "Wrong Coffee Format")
     private String    coffee;
+
+    @Pattern(regexp = "Small|Medium|Grande|Venti", message = "Size needs to be Klein|Mittel|Grande|Venti")
     private String    size;
+
+    @NotNull(message = "The Price is required!")
+    @DecimalMin(value = "3", message = "The minimum Price is 3 Euros!")
+    @DecimalMax(value = "8", message = "The maxmimum Price is 8 Euros!")
     private Double    price;
+
+    @NotNull(message = "Quantity is required!")
+    @Min(value = 1, message = "The minimum quantity is one!")
+    @Max(value = 8, message = "The maxmimum quantity is 8   !")
     private Integer   quantity;
+
+    @NotNull(message = "Syrup needs yes or no!")
     private Boolean   sirup;
 
      private static final AtomicLong sequence = new AtomicLong(1000);
@@ -51,23 +69,6 @@ public class Order implements  Cloneable{
 
     public void setOrderId(){
          orderId = sequence.getAndIncrement();
-    }
-
-    private static final String[] sizes = { "Klein", "Mittel", "Grande", "Venti" };
-
-    public void setPrice(Double price) {
-        if (price < 3)
-            throw new CoffeeOrderException("Der min. Preis ist 3.0 Eur");
-        if (price > 8)
-            throw new CoffeeOrderException("Der min. Preis ist 8.0 Eur");
-
-        this.price = price;
-    }
-
-    public void setSize(String size) {
-        if (Arrays.asList(sizes).contains(size) == false)
-            throw new CoffeeOrderException("Falsche groesse, es muss groesse: " + Arrays.toString(sizes) + " haben");
-        this.size = size;
     }
 
     @Override

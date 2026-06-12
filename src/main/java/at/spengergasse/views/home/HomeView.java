@@ -26,7 +26,7 @@ public class HomeView extends VerticalLayout {
         img.setHeight("350px");
 
         Paragraph description = new Paragraph(
-                "In unserem Mochi Café verbinden wir aromatischen Kaffee aus frisch gerösteten Kaffeebohnen mit den süßen Spezialitäten der philippinischen Dessertkultur. Jede Tasse wird mit Sorgfalt zubereitet, um den vollen Geschmack unserer hochwertigen Bohnen zu entfalten. Von traditionellen Leckereien bis hin zu modernen Mochi-Kreationen – bei uns stehen Qualität, Genuss und ein einzigartiges Café-Erlebnis im Mittelpunkt.\n");
+                "In our Mochi Café, we combine aromatic coffee made from freshly roasted beans with the sweet specialties of Filipino dessert culture. Each cup is carefully prepared to bring out the full flavor of our high-quality beans. From traditional treats to modern mochi creations, quality, enjoyment, and a unique café experience are our top priorities.\n");
         description.setWidth("500px");
         description.getStyle()
                 .set("font-size", "22px")

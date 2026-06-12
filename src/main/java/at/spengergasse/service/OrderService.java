@@ -23,7 +23,7 @@ public class OrderService {
         Order p;
         Faker faker;
         String[] COFFEES = {"Cappucino", "Latte", "Melange", "Espresso", "Mocha", "Americano"};
-        String[] SIZES = {"Klein", "Mittel", "Grande", "Venti"};
+        String[] SIZES = {"Small", "Medium", "Grande", "Venti"};
 
         faker = new Faker();
 
