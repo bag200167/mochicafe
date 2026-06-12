@@ -1,19 +1,21 @@
 package at.spengergasse.service;
 
+import at.spengergasse.domain.CoffeeOrderException;
 import at.spengergasse.domain.Order;
 import com.github.javafaker.Faker;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
-    private ArrayList<Order> order;
+    private static ArrayList<Order> orders;
 
     public OrderService(){
-        order = new ArrayList<>(1000);
+        orders = new ArrayList<>(1000);
         fillTestData(500);
     }
 
@@ -36,22 +38,22 @@ public class OrderService {
             p.setQuantity(faker.number().numberBetween(1, 6));
             p.setSirup(faker.bool().bool());
 
-            order.add(p);
+            orders.add(p);
         }
     }
 
     public ArrayList<Order> findAll (){
-        ArrayList<Order> copy = new ArrayList<Order>(order);
+        ArrayList<Order> copy = new ArrayList<Order>(orders);
         return copy;
     }
 
     public void removeAll() {
-        order.clear();
+        orders.clear();
     }
 
     @Override
     public String toString() {
-    return order.stream()
+    return orders.stream()
             .map(order -> order.toString())
             .collect(Collectors.joining("\n"));
     }
@@ -61,6 +63,55 @@ public class OrderService {
 
         // -20 Euro!!!
         ord = new Order(LocalDate.now(), "melange", "Venti", -20.0, 1, true);
-        order.add(ord);
+        orders.add(ord);
+    }
+
+    public static void removeOrder_old(Long orderId) {
+            Order o;
+            Iterator<Order> it;
+            int anz;
+
+            anz = 0;
+            if (orderId == null)
+                throw new CoffeeOrderException("No Order ID!");
+            it = orders.iterator();
+            while (it.hasNext()) {
+                o = it.next();
+                if (o.getOrderId().equals(orderId)) {
+                    it.remove();
+                    anz++;
+                }
+            }
+            if (anz == 0)
+                throw new CoffeeOrderException("Order with the ID " + orderId + " not found!");
+        }
+
+    public static void removeOrder(Long orderId) {
+        if(orderId == null){
+            throw new CoffeeOrderException("No Order ID!");
+        }
+        boolean found = orders.removeIf(o -> o.getOrderId().equals(orderId));
+        if(!found){
+            throw new CoffeeOrderException("Order not found!");
+        }
+    }
+
+    public static void oneMore(Long orderId) {
+        if(orderId == null){
+            throw new CoffeeOrderException("No Order ID!");
+        }
+        orders.stream()
+                .filter(o -> o.getOrderId().equals(orderId))
+                .forEach(order -> order.setQuantity(order.getQuantity()+1));
+    }
+
+    public static void oneMore_old(Long orderId) {
+        for (Order o : orders) {
+            if (o.getOrderId().equals(orderId)) {
+                o.setQuantity(o.getQuantity() + 1);
+                return;
+            }
+        }
+        throw new CoffeeOrderException("Order not found!");
     }
 }

@@ -72,11 +72,43 @@ public class OrdersView extends VerticalLayout {
                 .setSortable(true)
                 .setComparator(o -> o.getSirup());
 
+        grid.addComponentColumn(o -> {
+                    Button remove = new Button("Delete");
+                    remove.addClickListener(e -> removeOrder(o.getOrderId()));
+                    return remove;
+                })
+                .setHeader("Task")
+                .setSortable(false);
+
+        grid.addComponentColumn(o -> new Button("One more", e -> oneMore(o.getOrderId())))
+                .setHeader("Task")
+                .setSortable(false);
+
         setSizeFull();
         grid.setSizeFull();
         add(buttons);
         add(grid);
         reload();
+    }
+
+    private void oneMore(Long orderId) {
+        try {
+            OrderService.oneMore(orderId);
+            reload();
+        }
+        catch (CoffeeOrderException e) {
+            Notification.show(e.getMessage());
+        }
+    }
+
+    private void removeOrder(Long orderId) {
+        try{
+            OrderService.removeOrder(orderId);
+            reload();
+        }catch (CoffeeOrderException e) {
+            Notification.show(e.getMessage());
+        }
+
     }
 
     private void addWrongOrder() {
