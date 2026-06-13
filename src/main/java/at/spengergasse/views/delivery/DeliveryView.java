@@ -11,6 +11,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 import org.vaadin.lineawesome.LineAwesomeIconUrl;
 
@@ -18,7 +19,8 @@ import java.util.OptionalDouble;
 
 @PageTitle("Delivery")
 @Route("delivery")
-@Menu(order = 2, icon = LineAwesomeIconUrl.CAR_SIDE_SOLID)
+@Menu(order = 2, icon = "line-awesome/svg/truck-solid.svg")  // ✅ adds it to sidebar
+@AnonymousAllowed
 public class DeliveryView extends VerticalLayout {
 
     public DeliveryView() {
@@ -26,13 +28,13 @@ public class DeliveryView extends VerticalLayout {
 
         add(HomeView.getHeader());
 
-        H2 title = new H2("Lieferung");
+        H2 title = new H2("Delivery");
         add(title);
 
-        Component zone1 = getCard("5. Bezirk", 3.9, OptionalDouble.of(15.0));
-        Component zone2 = getCard("3. und 4. Bezirk", 5.9, OptionalDouble.of(20));
-        Component zone3 = getCard("Wien", 7.9, OptionalDouble.of(30));
-        Component zone4 = getCard("Außerhalb von Wien", 20, OptionalDouble.empty());
+        Component zone1 = getCard("5. District", 3.9, OptionalDouble.of(15.0));
+        Component zone2 = getCard("3. and 4. District", 5.9, OptionalDouble.of(20));
+        Component zone3 = getCard("Vienna", 7.9, OptionalDouble.of(30));
+        Component zone4 = getCard("Outside of Vienna", 20, OptionalDouble.empty());
 
         FlexLayout cardsLayout = new FlexLayout(zone1, zone2, zone3, zone4);
         cardsLayout.setWidthFull();
@@ -40,7 +42,7 @@ public class DeliveryView extends VerticalLayout {
         cardsLayout.setFlexWrap(FlexLayout.FlexWrap.WRAP);
         add(cardsLayout);
 
-        Paragraph info = new Paragraph("Wir liefern Ihre Bestellung in der Regel innerhalb von 30 bis 90 Minuten – frisch und heiß zu Ihnen nach Hause.");
+        Paragraph info = new Paragraph("We usually deliver your order within 30 to 90 minutes – fresh and hot to your home.\n");
         info.setWidth("100%");
         info.getStyle().set("text-align", "center");
         add(info);
@@ -57,9 +59,9 @@ public class DeliveryView extends VerticalLayout {
         H2 zone = new H2(sellingZone);
         Paragraph price = new Paragraph(deliveryPrice + " Euro");
         if(freeDelivery.isPresent()){
-            free = new Paragraph( "Gratislieferung " + freeDelivery.getAsDouble() + " Euro");
+            free = new Paragraph( "Free Delivery " + freeDelivery.getAsDouble() + " Euro");
         }else{
-            free = new Paragraph("Keine Gratislieferung");
+            free = new Paragraph("No Free Delivery");
         }
         VerticalLayout card = new VerticalLayout(zone, price, free);
         card.setWidth("350px");

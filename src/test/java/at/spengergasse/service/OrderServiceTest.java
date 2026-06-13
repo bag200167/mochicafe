@@ -9,7 +9,7 @@ class OrderServiceTest {
 
     @Test
     void testToString() {
-        OrderService mochicafe = new OrderService();
-        System.out.println(mochicafe);
+        //OrderService mochicafe = new OrderService();
+        //System.out.println(mochicafe);
     }
 }

@@ -1,9 +1,12 @@
 package at.spengergasse.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -15,9 +18,11 @@ import java.util.concurrent.atomic.AtomicLong;
 //@AllArgsConstructor
 @ToString
 @Entity
+@Table(name  = "coffee_order")
 
 public class Order implements  Cloneable{
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
 
      @NotNull(message = "Order Date is required!")
@@ -44,10 +49,7 @@ public class Order implements  Cloneable{
     @NotNull(message = "Syrup needs yes or no!")
     private Boolean   sirup = false;
 
-     private static final AtomicLong sequence = new AtomicLong(1000);
-
     public Order(Long orderId, LocalDate orderDate, String coffee, String size, Double price, Integer quantity, Boolean sirup){
-        setOrderId(orderId);
         setOrderDate(orderDate);
         setCoffee(coffee);
         setSize(size);
@@ -66,10 +68,6 @@ public class Order implements  Cloneable{
     }
 
     public Order(){
-    }
-
-    public void setOrderId(){
-         orderId = sequence.getAndIncrement();
     }
 
     @Override

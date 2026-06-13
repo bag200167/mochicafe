@@ -7,12 +7,14 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 import org.vaadin.lineawesome.LineAwesomeIconUrl;
 
 @PageTitle("Home")
 @Route("")
-@Menu(order = 0, icon = LineAwesomeIconUrl.HOME_SOLID)
+@Menu(order = 0, icon = "line-awesome/svg/home-solid.svg")  // ✅ adds it to sidebar
+@AnonymousAllowed
 public class HomeView extends VerticalLayout {
 
     public HomeView() {

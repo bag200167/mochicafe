@@ -24,6 +24,7 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.lineawesome.LineAwesomeIconUrl;
@@ -32,7 +33,8 @@ import java.time.LocalDate;
 
 @PageTitle("Orders")
 @Route("orders")
-@Menu(order = 1, icon = LineAwesomeIconUrl.COFFEE_SOLID)
+@Menu(order = 1, icon = "line-awesome/svg/list-solid.svg")  // ✅ adds it to sidebar
+@AnonymousAllowed
 public class OrdersView extends VerticalLayout {
 
     private final Button buttonRemoveAllOrders = new Button("Remove All Orders");
@@ -151,13 +153,16 @@ public class OrdersView extends VerticalLayout {
 
         if(existingOrder == null) {
             order = new Order();
-            order.setOrderId();
 
         }else {
             order = existingOrder;
         }
 
-        orderId.setValue("" + order.getOrderId());
+        if (existingOrder == null) {
+            orderId.setValue(String.valueOf(coffeeOrderService.getNextOrderId())); // ✅ shows next ID
+        } else {
+            orderId.setValue(String.valueOf(order.getOrderId())); // ✅ shows existing ID
+        }
         binder.setBean(order);
 
         VerticalLayout formLayout = new VerticalLayout(
@@ -173,7 +178,9 @@ public class OrdersView extends VerticalLayout {
         Button saveButton = new Button("OK", event -> {
             if (binder.validate().isOk()) {
                 if(existingOrder == null){
-                  OrderService.add(order);
+                  coffeeOrderService.add(order);
+                }else {
+                    coffeeOrderService.update(order);   // ✅ UPDATE existing order
                 }
                 reload();
                 dialog.close();
@@ -194,7 +201,7 @@ public class OrdersView extends VerticalLayout {
 
     private void oneMore(Long orderId) {
         try {
-            OrderService.oneMore(orderId);
+            coffeeOrderService.oneMore(orderId);
             reload();
         }
         catch (CoffeeOrderException e) {
@@ -204,7 +211,7 @@ public class OrdersView extends VerticalLayout {
 
     private void removeOrder(Long orderId) {
         try{
-            OrderService.removeOrder(orderId);
+            coffeeOrderService.removeOrder(orderId);
             reload();
         }catch (CoffeeOrderException e) {
             Notification.show(e.getMessage());
