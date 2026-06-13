@@ -51,7 +51,7 @@ public class OrdersView extends VerticalLayout {
         buttonAddWrong.addClickListener(b -> addWrongOrder());
         buttonRemoveAllOrders.addClickListener(b -> removeAllOrders());
         buttonAdd10Orders.addClickListener(b -> add10Orders());
-        buttonAddOrder.addClickListener(buttonClickEvent -> addOrder());
+        buttonAddOrder.addClickListener(buttonClickEvent -> addChangeOrder(null));
 
         HorizontalLayout buttons = new HorizontalLayout(buttonRemoveAllOrders,buttonAdd10Orders,buttonAddWrong, buttonAddOrder);
         buttons.setSpacing(true);
@@ -95,6 +95,10 @@ public class OrdersView extends VerticalLayout {
                 .setHeader("Task")
                 .setSortable(false);
 
+        grid.addComponentColumn(o -> new Button("Change order", e-> addChangeOrder(o)))
+                .setHeader("Task")
+                .setSortable(false);
+
         setSizeFull();
         grid.setSizeFull();
         add(buttons);
@@ -102,8 +106,12 @@ public class OrdersView extends VerticalLayout {
         reload();
     }
 
-    private void addOrder() {
+    private void addChangeOrder(Order existingOrder) {
+        Order order;
         Dialog dialog = new Dialog();
+        dialog.setHeaderTitle(existingOrder!=null ? "Change Order" : "Add 1 Order");
+
+
         dialog.setHeaderTitle("New Coffee Order");
         TextField orderId = new TextField("Order ID");
         orderId.setReadOnly(true);
@@ -140,10 +148,16 @@ public class OrdersView extends VerticalLayout {
         binder.forField(sirup)
                 .bind("sirup");
 
-        Order order = new Order();
-        order.setOrderId();
-        orderId.setValue(""+ order.getOrderId());
 
+        if(existingOrder == null) {
+            order = new Order();
+            order.setOrderId();
+
+        }else {
+            order = existingOrder;
+        }
+
+        orderId.setValue("" + order.getOrderId());
         binder.setBean(order);
 
         VerticalLayout formLayout = new VerticalLayout(
@@ -158,7 +172,9 @@ public class OrdersView extends VerticalLayout {
 
         Button saveButton = new Button("OK", event -> {
             if (binder.validate().isOk()) {
-                OrderService.add(order);
+                if(existingOrder == null){
+                  OrderService.add(order);
+                }
                 reload();
                 dialog.close();
                 Notification.show("Coffee order saved");
